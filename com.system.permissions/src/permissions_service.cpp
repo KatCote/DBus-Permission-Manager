@@ -53,6 +53,7 @@ class PermissionsService
         }
 
         bus->enterEventLoop();
+
         sqlite3_close(db);
     }
 
@@ -97,6 +98,7 @@ class PermissionsService
                     break;
                 }
             }
+
             return 0;
         };
 
@@ -113,7 +115,7 @@ class PermissionsService
         {
             std::cout << (foundMatch ? "РЕЗРЕШЕНО" : "ЗАПРЕЩЕНО") << std::endl;
         }
-
+        
         return foundMatch;
     }
 
