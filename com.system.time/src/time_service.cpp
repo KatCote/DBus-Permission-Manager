@@ -13,7 +13,7 @@ class TimeService {
 
         registrationProxy->registerMethod("GetSystemTime")
             .onInterface("com.system.TimeInterface")
-            .implementedAs([this]() { return GetSystemTime();});
+            .implementedAs([this]() { return GetSystemTime(); });
             
         registrationProxy->finishRegistration();
 
@@ -22,26 +22,32 @@ class TimeService {
 
     public:
 
-    uint64_t GetSystemTime() {
-        std::cout << "Получен запрос на получение SystemTime. ";
+    uint64_t GetSystemTime(void) {
+        std::cout << "Получен запрос на получение SystemTime. " << std::endl;
 
-        auto proxy = sdbus::createProxy(std::move(bus), "com.system.permissions", "/com/system/permissions");
-        bool result = false;
+        auto proxy = sdbus::createProxy(*bus, "com.system.permissions", "/com/system/permissions");
+        bool bResult = false;
 
         try {
+            
             proxy->callMethod("CheckApplicationHasPermission")
                 .onInterface("com.system.PermissionsInterface")
                 .withArguments<std::string, int>("/path/to/bin", 0)
-                .storeResultsTo(result);
+                .storeResultsTo(bResult);
 
-            std::cout << "Полученное значение: " << result << std::endl;
-        } catch (const sdbus::Error& e) {
+            std::cout << "Полученное решение: " << (bResult ? "РЕЗРЕШЕНО" : "ЗАПРЕЩЕНО") << std::endl;
+
+        } catch (const sdbus::Error& e)
+        {
             std::cerr << "Ошибка вызова метода: " << e.what() << std::endl;
         }
 
         proxy.release();
 
-        return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        if (bResult == false)
+        { throw sdbus::createError(1, "Unauthorized Access"); }
+
+        return (bResult ? (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()) : 0);
     }
 
     private:

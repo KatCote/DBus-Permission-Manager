@@ -61,7 +61,6 @@ class PermissionsService
 
     void RequestPermission(int permissionEnumCode)
     {
-        //sql::ResultSet *res = stmt->executeQuery("INSERT INTO SystemTime (PWD) VALUES ('A')");
         std::string path = "/path/to/bin";
 
         std::cout << "Запрос разрешения с кодом '" << permissionEnumCode << "'. ";
@@ -81,7 +80,7 @@ class PermissionsService
     {
         std::cout <<
             "Проверка разрешения " << "c кодом '" << permissionEnumCode <<
-            "' для приложения по пути '" << applicationExecPath << "'. Результат: ";
+            "' для приложения по пути '" << applicationExecPath << "'.\nРезультат: ";
 
         auto callback = [](void * data, int argc, char ** argv, char ** azColName)
         {
@@ -116,7 +115,7 @@ class PermissionsService
             std::cout << (foundMatch ? "РЕЗРЕШЕНО" : "ЗАПРЕЩЕНО") << std::endl;
         }
         
-        return foundMatch;
+        return (bool) foundMatch;
     }
 
     private:
